@@ -10,16 +10,26 @@ require 'ruport'
 class AutoPerf
   def initialize(opts = {})
     @conf = {}
+    @runfile = nil
     OptionParser.new do |opts|
       opts.banner = "Usage: autoperf.rb [-c config]"
 
       opts.on("-c", "--config [string]", String, "configuration file") do |v|
         @conf = parse_config(v)
       end
+            
+      opts.on("-r", "--runfile [string]", String, "the run file") do |v|
+        raise Errno::EACCES, "#{v} is not readable" unless File.readable?(v)
+        @runfile= v
+      end
+      
     end.parse!
 
     run()
   end
+
+
+
 
   def parse_config(config_file)
     raise Errno::EACCES, "#{config_file} is not readable" unless File.readable?(config_file)
@@ -49,10 +59,17 @@ class AutoPerf
 
     return conf
   end
-
+  
+  # httperf --hog --server localhost --port 3000 --wsesslog=5,0,requests.foo --session-cookie --rate=1
+  
+  
   def benchmark(conf)
     httperf_opt = conf.keys.grep(/httperf/).collect {|k| "--#{k.gsub(/httperf_/, '')} #{conf[k]}"}.join(" ")
     httperf_cmd = "httperf --hog --server #{conf['host']} --port #{conf['port']} #{httperf_opt}"
+    if @runfile
+      httperf_cmd << " --wsesslog=#{conf['session_runs']},0,#{@runfile} --session-cookie"
+    end
+    
 
     res = Hash.new("")
     IO.popen("#{httperf_cmd} 2>&1") do |pipe|
