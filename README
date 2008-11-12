@@ -1,3 +1,22 @@
+This is a branch of Ilya Grigorik's autoperf. I have modified it so that it uses 
+the wsesslog option of httperf. I have included a small plugin that helps
+you capture a "session" that you can use autoperf to replay on your server.
+
+First setup the session_capture.rb plugin. Add it to lib/ and then in 
+your application.rb, add an "include SessionCapture". Start your
+webserver and click around, simulating real world usage. When you are 
+done you will have a session-log file in logs/requests.log.
+
+Once you are satisfied with that session, you can remove the include statement
+from your application.rb
+
+Tweak your execution plan as described below, and then run autoperf:
+
+ruby autoperf.rb -c sample.conf -r <path to rails root>/logs/requests.log
+
+
+--------------------------------
+
 Autoperf is a ruby driver for httperf, designed to help you automate load and performance
 testing of any web application - for a single end point, or through log replay.
 

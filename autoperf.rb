@@ -28,9 +28,6 @@ class AutoPerf
     run()
   end
 
-
-
-
   def parse_config(config_file)
     raise Errno::EACCES, "#{config_file} is not readable" unless File.readable?(config_file)
 
@@ -61,7 +58,6 @@ class AutoPerf
   end
   
   # httperf --hog --server localhost --port 3000 --wsesslog=5,0,requests.foo --session-cookie --rate=1
-  
   
   def benchmark(conf)
     httperf_opt = conf.keys.grep(/httperf/).collect {|k| "--#{k.gsub(/httperf_/, '')} #{conf[k]}"}.join(" ")

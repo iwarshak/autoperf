@@ -1,8 +1,0 @@
-/
-/topics/1
-/login
-/login method=POST contents=user%5Blogin%5D=ian&user%5Bpassword%5D=ian
-/
-/topics/1
-/posts method=POST contents=post%5Btopic_id%5D=1&post%5Bbody%5D=cool+beans
-/topics/1
